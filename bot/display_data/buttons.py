@@ -12,3 +12,7 @@ ABOUT_ACADEMY_BUTTON = {TJ: 'Дар бораи мо',
 INSTAGRAM_BUTTON = 'Instagram'
 BACK_BUTTON = {TJ: '◀️ Ба акиб',
                RU: '◀️ Назад'}
+REGISTER_BUTTON = {
+    TJ: 'Номнавис ба курс',
+    RU: 'Записаться на курс',
+}
