@@ -1,37 +1,37 @@
 # WEB_ACADEMY
 WEB_ACADEMY
-### Как запустить проект:
+### How to run the project:
 
 Clone repository and go to it:
 
 ```
-git clone git@github.com:anushST/api_yamdb.git
+git clone git@github.com:anushST/webacademy.git
 ```
 
 ```
-cd api_yamdb
+cd webacademy
 ```
 
 Create and activate virtual environment:
 
 ```
-python3 -m venv env
+python3 -m venv venv
 ```
 
 * If you have Linux/macOS
 
     ```
-    source env/bin/activate
+    source venv/bin/activate
     ```
 
 * If you have windows
 
     ```
-    source env/scripts/activate
+    source venv/Scripts/activate
     ```
 
 ```
-python3 -m pip install --upgrade pip
+python -m pip install --upgrade pip
 ```
 
 Install dependencies from file requirements.txt:
