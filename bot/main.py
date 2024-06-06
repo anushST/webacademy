@@ -138,15 +138,24 @@ def courses(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
     chat_id = update.effective_chat.id
     lang = db_queries.get_lang(chat_id)
-    keyboard = [[InlineKeyboardButton(course)] for course in texts.COURSES]
     keyboard = []
+    row = []
+    i = 0
     for callback_data, course in texts.COURSES.items():
         callback = f'{constants.COURSE_PATTERN.split("^")[1]}{callback_data}'
-        keyboard.append([InlineKeyboardButton(course[lang]['button_text'],
-                                              callback_data=callback)])
+        row.append(InlineKeyboardButton(course[lang]['button_text'],
+                                        callback_data=callback))
+        i += 1
+        if i > 1:
+            keyboard.append(row)
+            row = []
+            i = 0
+    if row:
+        keyboard.append(row)
     keyboard.append(
         [InlineKeyboardButton(buttons.BACK_BUTTON[lang],
                               callback_data=constants.MAIN_MENU_CALLBACK)])
+
     reply_markup = InlineKeyboardMarkup(keyboard)
     query.edit_message_caption(texts.COURSES_LIST_TEXT[lang], reply_markup)
 

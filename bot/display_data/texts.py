@@ -41,14 +41,32 @@ ABOUT_ACADEMY_TEXT = {
 COURSES = {
     'ios': {
         TJ: {'text': 'Биёед хонем курси ios',
-             'button_text': 'Курси айос'},
+             'button_text': '📱 ios-разработка' }, # max_length=16
         RU: {'text': 'Давайте обучаться курсу ios',
-             'button_text': 'Курс айос'},
+             'button_text': '📱 ios-разработка'},
     },
     'android': {
         TJ: {'text': 'Андроид ба пеш',
-             'button_text': 'Курс Андроид'},
+             'button_text': '🤖 Android-разработ'},
         RU: {'text': 'Андроид вперёд',
-             'button_text': 'Курс Андроид'},
+             'button_text': '🤖 Android-разработ'},
+    },
+    'python-base': {
+        TJ: {'text': 'Курси python',
+             'button_text': '🐍 Python-основахо'},
+        RU: {'text': 'Курс python',
+             'button_text': '🐍 Python-основы'},
+    },
+    'python-django': {
+        TJ: {'text': 'Курс Python-django',
+             'button_text': '🌐 Python-django'},
+        RU: {'text': 'Курс Python-django',
+             'button_text': '🌐 Python-django'},
+    },
+    'js-base': {
+        TJ: {'text': 'Курс Js - основахо',
+             'button_text': '🌐 js-основахо'},
+        RU: {'text': 'Курс js - основахо',
+             'button_text': '🌐 js-основы'},
     }
 }
