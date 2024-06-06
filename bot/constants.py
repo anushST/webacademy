@@ -2,6 +2,7 @@
 # Languages
 TJ = 'tj'
 RU = 'ru'
+LANGUAGES = [TJ, RU]
 
 # CallBacks
 LANG_TJ_CALLBACK = 'lang_tj'
@@ -26,3 +27,4 @@ REGISTER_URL = ('https://docs.google.com/forms/d/1Fkr0s_IPnkmeA1N4wfhqsrXFHLdy'
                 'X80ml_dsNNBqTm99CrjDLk9n5ag46gy7h9AQON_p8yiYYUDs_aem_AWjlqWOb'
                 'aSqt13rBLiNvPsx4P_MCjG7raKg7SdkJQ9oNd0m112-byqjUbRBmZwDDlaV6j'
                 'HUQCcf4KvAgXD1jPpsa&edit_requested=true')
+TELEGRAM_CHANNEL_URL = 'https://t.me/webacademychannel'

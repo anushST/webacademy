@@ -8,25 +8,30 @@ from telegram.ext import (CallbackContext, CallbackQueryHandler,
                           CommandHandler, Updater,)
 
 import constants
+import db_queries
+from decorators import safe_handler_method
 from display_data import buttons, texts
-from exceptions import NoTokenError
+from exceptions import BadRequestError, NoTokenError
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s '
                               '(def %(funcName)s:%(lineno)d)')
-handler = logging.StreamHandler()
+handler = logging.handlers.RotatingFileHandler(
+        'logs/bot.log', maxBytes=5*1024*1024, backupCount=2
+)
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
-def check_token(token):
+def check_token(token: str) -> None:
     """Check if the token is None."""
     if token is None:
         logger.critical('Missing required environment variable(token)')
         raise NoTokenError('No Token')
 
 
+@safe_handler_method
 def start(update: Update, context: CallbackContext) -> None:
     """Send language choice.
 
@@ -50,18 +55,23 @@ def start(update: Update, context: CallbackContext) -> None:
     update.message.delete()
 
 
+@safe_handler_method
 def main_menu(update: Update, context: CallbackContext) -> None:
     """Send main menu.
 
-    Here is three navigation buttons: Contact Information, About Academy
+    Here are three navigation buttons: Contact Information, About Academy
     and Courses.
     """
     query = update.callback_query
-    if 'lang' not in context.user_data:
+    chat_id = update.effective_chat.id
+    if 'lang' in query.data:
         lang = query.data.split('_')[1]
-        context.user_data['lang'] = lang
+        if lang in constants.LANGUAGES:
+            lang = db_queries.save_lang(chat_id, lang)
+        else:
+            raise BadRequestError('Lang is in incorrect format.')
     else:
-        lang = context.user_data.get('lang', constants.RU)
+        lang = db_queries.get_lang(chat_id)
 
     keyboard = [
         [InlineKeyboardButton(buttons.COURSE_BUTTON[lang],
@@ -73,8 +83,7 @@ def main_menu(update: Update, context: CallbackContext) -> None:
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    chat_id = update.effective_chat.id
-    if not context.bot_data['sent_main_message']:
+    if not db_queries.get_sent_main_message(chat_id):
         with open('static/logo.jpg', 'rb') as photo:
             context.bot.send_photo(
                 chat_id,
@@ -83,7 +92,7 @@ def main_menu(update: Update, context: CallbackContext) -> None:
                 reply_markup=reply_markup,
                 parse_mode='HTML'
             )
-        context.bot_data['sent_main_message'] = True
+        db_queries.set_sent_main_message_True(chat_id)
     else:
         query.edit_message_caption(texts.WELCOME_TEXT[lang], reply_markup)
     if 'lang_message_id' in context.bot_data:
@@ -92,36 +101,46 @@ def main_menu(update: Update, context: CallbackContext) -> None:
         context.bot_data.pop('lang_message_id')
 
 
+@safe_handler_method
 def contact_info(update: Update, context: CallbackContext) -> None:
     """Send contact info."""
     query = update.callback_query
-    lang = context.user_data.get('lang', constants.RU)
+    chat_id = update.effective_chat.id
+    lang = db_queries.get_lang(chat_id)
     keyboard = [
         [InlineKeyboardButton(buttons.INSTAGRAM_BUTTON,
                               constants.INSTAGRAM_URL)],
+        [InlineKeyboardButton(buttons.TELEGRAM_CHANNEL_BUTTON,
+                              constants.TELEGRAM_CHANNEL_URL)],
         [InlineKeyboardButton(buttons.BACK_BUTTON[lang],
                               callback_data=constants.MAIN_MENU_CALLBACK)]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    query.edit_message_caption(texts.CONTACTS_TEXT[lang], reply_markup)
+    query.edit_message_caption(texts.CONTACTS_TEXT[lang], reply_markup,
+                               parse_mode='HTML')
 
 
+@safe_handler_method
 def about_academy(update: Update, context: CallbackContext) -> None:
     """Send information about academy."""
     query = update.callback_query
-    lang = context.user_data.get('lang', constants.RU)
+    chat_id = update.effective_chat.id
+    lang = db_queries.get_lang(chat_id)
     keyboard = [
         [InlineKeyboardButton(buttons.BACK_BUTTON[lang],
                               callback_data=constants.MAIN_MENU_CALLBACK)]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    query.edit_message_caption(texts.ABOUT_ACADEMY_TEXT[lang], reply_markup)
+    query.edit_message_caption(texts.ABOUT_ACADEMY_TEXT[lang], reply_markup,
+                               parse_mode='HTML')
 
 
+@safe_handler_method
 def courses(update: Update, context: CallbackContext) -> None:
     """Send courses list."""
     query = update.callback_query
-    lang = context.user_data.get('lang', constants.RU)
+    chat_id = update.effective_chat.id
+    lang = db_queries.get_lang(chat_id)
     keyboard = [[InlineKeyboardButton(course)] for course in texts.COURSES]
     keyboard = []
     for callback_data, course in texts.COURSES.items():
@@ -135,11 +154,13 @@ def courses(update: Update, context: CallbackContext) -> None:
     query.edit_message_caption(texts.COURSES_LIST_TEXT[lang], reply_markup)
 
 
+@safe_handler_method
 def course_info(update: Update, context: CallbackContext) -> None:
     """Send information about the course."""
     query = update.callback_query
     course_name = query.data.split('_')[1]
-    lang = context.user_data['lang']
+    chat_id = update.effective_chat.id
+    lang = db_queries.get_lang(chat_id)
 
     keyboard = [
         [InlineKeyboardButton(buttons.REGISTER_BUTTON[lang],
@@ -160,21 +181,23 @@ def main() -> None:
     updater = Updater(TELEGRAM_TOKEN)
 
     dispatcher = updater.dispatcher
+    try:
+        dispatcher.add_handler(CommandHandler(constants.START_COMMAND, start))
+        dispatcher.add_handler(CallbackQueryHandler(
+            main_menu, pattern=constants.MAIN_MENU_PATTERN))
+        dispatcher.add_handler(CallbackQueryHandler(
+            contact_info, pattern=constants.CONTACT_INFO_CALLBACK))
+        dispatcher.add_handler(CallbackQueryHandler(
+            about_academy, pattern=constants.ACADEMY_DESC_CALLBACK))
+        dispatcher.add_handler(CallbackQueryHandler(
+            courses, pattern=constants.COURSES_CALLBACK))
+        dispatcher.add_handler(CallbackQueryHandler(
+            course_info, pattern=constants.COURSE_PATTERN))
 
-    dispatcher.add_handler(CommandHandler(constants.START_COMMAND, start))
-    dispatcher.add_handler(CallbackQueryHandler(
-        main_menu, pattern=constants.MAIN_MENU_PATTERN))
-    dispatcher.add_handler(CallbackQueryHandler(
-        contact_info, pattern=constants.CONTACT_INFO_CALLBACK))
-    dispatcher.add_handler(CallbackQueryHandler(
-        about_academy, pattern=constants.ACADEMY_DESC_CALLBACK))
-    dispatcher.add_handler(CallbackQueryHandler(
-        courses, pattern=constants.COURSES_CALLBACK))
-    dispatcher.add_handler(CallbackQueryHandler(
-        course_info, pattern=constants.COURSE_PATTERN))
-
-    updater.start_polling()
-    updater.idle()
+        updater.start_polling()
+        updater.idle()
+    except Exception as e:
+        logger.error(f'An error occured in: {e}', exc_info=True)
 
 
 if __name__ == '__main__':
