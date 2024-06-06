@@ -176,7 +176,8 @@ def course_info(update: Update, context: CallbackContext) -> None:
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     query.edit_message_caption(texts.COURSES[course_name][lang]['text'],
-                               reply_markup=reply_markup)
+                               reply_markup=reply_markup,
+                               parse_mode='HTML')
 
 
 def delete_user_message(update: Update, context: CallbackContext) -> None:

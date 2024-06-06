@@ -52,15 +52,27 @@ COURSES = {
              'button_text': '🤖 Android-разработ'},
     },
     'python-base': {
-        TJ: {'text': 'Курси python',
+        TJ: {'text': 'Курси пайтон',
              'button_text': '🐍 Python-основахо'},
-        RU: {'text': 'Курс python',
+        RU: {'text': (
+            '🐍 <b>Python - 3 месяца</b>\n\n'
+            '<b>Требования</b>: основы работы с компьютером\n'
+            '<b>Навыки</b>: Python, requests, SQL, SQLite, python-telegram-bot, Git, GitHub, ООП\n\n'
+            '    • 📍 1-й месяц: Основы Python\n'
+            '    • 📍 2-й месяц: Git, GitHub, SQLite, pytest, unittest\n'
+            '    • 📍 3-й месяц: python-telegram-bot продолжение, финальный проект\n'),
              'button_text': '🐍 Python-основы'},
     },
     'python-django': {
-        TJ: {'text': 'Курс Python-django',
+        TJ: {'text': 'Django',
              'button_text': '🌐 Python-django'},
-        RU: {'text': 'Курс Python-django',
+        RU: {'text': (
+            '🌐 <b>Django - 5 месяцев</b>\n\n'
+            '<b>Требования</b>:  Python, requests, SQL, SQLite, Git, GitHub, ООП\n'
+            '<b>Навыки</b>: Django, django-rest-framework, djoser, jwt, Gunicorn, NGINX, Docker\n\n'
+            '    • 📍 1-2-й месяц: Основы Django\n'
+            '    • 📍 2-4-й месяц: REST API, django-rest-framework\n'
+            '    • 📍 5-й месяц: Управление проектом на сервере\n'),
              'button_text': '🌐 Python-django'},
     },
     'js-base': {
