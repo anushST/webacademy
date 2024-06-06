@@ -5,7 +5,7 @@ from os import getenv
 from dotenv import load_dotenv
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import (CallbackContext, CallbackQueryHandler,
-                          CommandHandler, Updater,)
+                          CommandHandler, Filters, MessageHandler, Updater)
 
 import constants
 import db_queries
@@ -37,9 +37,6 @@ def start(update: Update, context: CallbackContext) -> None:
 
     Calls on /start command.
     """
-    context.user_data.clear()
-    context.bot_data.clear()
-    context.bot_data['sent_main_message'] = False
     keyboard = [
         [InlineKeyboardButton(
              buttons.TJ_LANG_CHOOSE_BUTTON,
@@ -173,6 +170,11 @@ def course_info(update: Update, context: CallbackContext) -> None:
                                reply_markup=reply_markup)
 
 
+def delete_user_message(update: Update, context: CallbackContext) -> None:
+    """Delete all messages sent by user."""
+    update.message.delete()
+
+
 def main() -> None:
     """Start bot."""
     load_dotenv()
@@ -193,6 +195,8 @@ def main() -> None:
             courses, pattern=constants.COURSES_CALLBACK))
         dispatcher.add_handler(CallbackQueryHandler(
             course_info, pattern=constants.COURSE_PATTERN))
+        dispatcher.add_handler(MessageHandler(Filters.all,
+                                              delete_user_message))
 
         updater.start_polling()
         updater.idle()
