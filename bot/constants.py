@@ -9,12 +9,13 @@ LANG_TJ_CALLBACK = 'lang_tj'
 LANG_RU_CALLBACK = 'lang_ru'
 CONTACT_INFO_CALLBACK = 'contact_info'
 ACADEMY_DESC_CALLBACK = 'academy_desc'
-COURSES_CALLBACK = 'courses'
+COURSES_CALLBACK = 'courses_page_1'
 MAIN_MENU_CALLBACK = 'main_menu'
 
 # CallBack patters
 LANG_PATTERN = '^lang_'
 COURSE_PATTERN = '^course_'
+COURSES_PATTERN = '^courses_page_'
 MAIN_MENU_PATTERN = f'^{LANG_PATTERN}|{MAIN_MENU_CALLBACK}$'
 
 # Commands
@@ -28,3 +29,6 @@ REGISTER_URL = ('https://docs.google.com/forms/d/1Fkr0s_IPnkmeA1N4wfhqsrXFHLdy'
                 'aSqt13rBLiNvPsx4P_MCjG7raKg7SdkJQ9oNd0m112-byqjUbRBmZwDDlaV6j'
                 'HUQCcf4KvAgXD1jPpsa&edit_requested=true')
 TELEGRAM_CHANNEL_URL = 'https://t.me/webacademychannel'
+
+# Paginator
+ITEMS_PER_PAGE = 2

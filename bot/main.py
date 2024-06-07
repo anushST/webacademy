@@ -12,6 +12,7 @@ import db_queries
 from decorators import safe_handler_method
 from display_data import buttons, texts
 from exceptions import BadRequestError, NoTokenError
+from paginator import Paginator
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -62,7 +63,7 @@ def main_menu(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
     chat_id = update.effective_chat.id
     if 'lang' in query.data:
-        lang = query.data.split('_')[1]
+        lang = query.data.split(constants.LANG_PATTERN.split("^")[1])[1]
         if lang in constants.LANGUAGES:
             lang = db_queries.save_lang(chat_id, lang)
         else:
@@ -138,20 +139,26 @@ def courses(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
     chat_id = update.effective_chat.id
     lang = db_queries.get_lang(chat_id)
+    page = int(query.data.split(constants.COURSES_PATTERN.split("^")[1])[1])
+    paginator = Paginator(texts.COURSES,
+                          constants.COURSES_PATTERN.split("^")[1],
+                          constants.ITEMS_PER_PAGE)
     keyboard = []
     row = []
-    i = 0
-    for callback_data, course in texts.COURSES.items():
+
+    for i, (callback_data, course) in enumerate(paginator.get_page(page)):
         callback = f'{constants.COURSE_PATTERN.split("^")[1]}{callback_data}'
-        row.append(InlineKeyboardButton(course[lang]['button_text'],
-                                        callback_data=callback))
-        i += 1
-        if i > 1:
+        button_text = course[lang]['button_text'][:16]
+        row.append(InlineKeyboardButton(button_text, callback_data=callback))
+
+        if (i + 1) % 2 == 0:
             keyboard.append(row)
             row = []
-            i = 0
+
     if row:
         keyboard.append(row)
+
+    keyboard.append(paginator.create_pagination_buttons(page))
     keyboard.append(
         [InlineKeyboardButton(buttons.BACK_BUTTON[lang],
                               callback_data=constants.MAIN_MENU_CALLBACK)])
@@ -202,7 +209,7 @@ def main() -> None:
         dispatcher.add_handler(CallbackQueryHandler(
             about_academy, pattern=constants.ACADEMY_DESC_CALLBACK))
         dispatcher.add_handler(CallbackQueryHandler(
-            courses, pattern=constants.COURSES_CALLBACK))
+            courses, pattern=constants.COURSES_PATTERN))
         dispatcher.add_handler(CallbackQueryHandler(
             course_info, pattern=constants.COURSE_PATTERN))
         dispatcher.add_handler(MessageHandler(Filters.all,
