@@ -13,6 +13,7 @@ from decorators import safe_handler_method
 from display_data import buttons, texts
 from exceptions import BadRequestError, NoTokenError
 from paginator import Paginator
+from shortcuts import send_photo
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -82,14 +83,14 @@ def main_menu(update: Update, context: CallbackContext) -> None:
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     if not db_queries.get_sent_main_message(chat_id):
-        with open('static/logo.jpg', 'rb') as photo:
-            context.bot.send_photo(
-                chat_id,
-                photo,
-                caption=texts.WELCOME_TEXT[lang],
-                reply_markup=reply_markup,
-                parse_mode='HTML'
-            )
+        send_photo(
+            url='logo.jpg',
+            bot=context.bot,
+            chat_id=chat_id,
+            caption=texts.WELCOME_TEXT[lang],
+            reply_markup=reply_markup,
+            parse_mode='HTML'
+        )
         db_queries.set_sent_main_message_True(chat_id)
     else:
         query.edit_message_caption(texts.WELCOME_TEXT[lang], reply_markup)
