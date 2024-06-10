@@ -32,3 +32,6 @@ TELEGRAM_CHANNEL_URL = 'https://t.me/webacademychannel'
 
 # Paginator
 ITEMS_PER_PAGE = 2
+
+# Database
+DATABASE = 'bot/db.sqlite3'

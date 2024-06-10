@@ -8,12 +8,30 @@ class NoTokenError(Exception):
 
 
 class NoLangChosenError(Exception):
-    """Raises when languaged didn't chose."""
+    """Raises when languaged didn't choose."""
 
     pass
 
 
 class BadRequestError(Exception):
     """Raises if request is bad."""
+
+    pass
+
+
+class ObjectDoesNotExistError(Exception):
+    """Raises when object doesn't exist in table."""
+
+    pass
+
+
+class FieldDoesNotExistError(Exception):
+    """Raises when field in database doesn't exist."""
+
+    pass
+
+
+class ValidationError(Exception):
+    """Raises when validation didn't pass."""
 
     pass
