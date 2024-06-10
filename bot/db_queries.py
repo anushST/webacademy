@@ -36,7 +36,7 @@ def save_lang(chat_id: int, lang: str) -> str:
         return cursor.fetchone()[0]
 
 
-def set_sent_main_message_True(chat_id: int) -> None:
+def set_sent_main_message_field(chat_id: int) -> None:
     """Set sent_main_message field in database True."""
     with sqlite3.connect('bot/db.sqlite3') as conn:
         cursor = conn.cursor()

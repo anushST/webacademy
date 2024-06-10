@@ -13,6 +13,8 @@ INSTAGRAM_BUTTON = 'Instagram'
 TELEGRAM_CHANNEL_BUTTON = 'Telegram'
 BACK_BUTTON = {TJ: '◀️ Ба акиб',
                RU: '◀️ Назад'}
+BACK_PAGINATOR_BUTTON = '⏪'
+FORWARD_PAGINATOR_BUTTON = '⏩'
 REGISTER_BUTTON = {
     TJ: 'Номнавис ба курс',
     RU: 'Записаться на курс',
