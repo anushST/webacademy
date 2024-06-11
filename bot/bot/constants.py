@@ -1,4 +1,4 @@
-"""Here are all contstants of bot."""
+"""Constants of bot package."""
 # Languages
 TJ = 'tj'
 RU = 'ru'
@@ -13,10 +13,9 @@ COURSES_CALLBACK = 'courses_page_1'
 MAIN_MENU_CALLBACK = 'main_menu'
 
 # CallBack patters
-LANG_PATTERN = '^lang_'
-COURSE_PATTERN = '^course_'
-COURSES_PATTERN = '^courses_page_'
-MAIN_MENU_PATTERN = f'^{LANG_PATTERN}|{MAIN_MENU_CALLBACK}$'
+LANG_PATTERN = 'lang_'
+COURSE_PATTERN = 'course_'
+COURSES_PATTERN = 'courses_page_'
 
 # Commands
 START_COMMAND = 'start'

@@ -1,4 +1,4 @@
-"""Bot exceptions."""
+"""Exceptions of bot package."""
 
 
 class NoTokenError(Exception):
@@ -33,5 +33,11 @@ class FieldDoesNotExistError(Exception):
 
 class ValidationError(Exception):
     """Raises when validation didn't pass."""
+
+    pass
+
+
+class LangNotChosenError(Exception):
+    """Raises when language not chosen."""
 
     pass
