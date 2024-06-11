@@ -1,5 +1,5 @@
-# WEB_ACADEMY
-WEB_ACADEMY
+# WEB_ACADEMY_BOT
+WEB_ACADEMY_BOT
 ### How to run the project:
 
 Clone repository and go to it:
@@ -15,7 +15,7 @@ cd webacademy
 Create and activate virtual environment:
 
 ```
-python3 -m venv venv
+python -m venv venv
 ```
 
 * If you have Linux/macOS
@@ -40,8 +40,20 @@ Install dependencies from file requirements.txt:
 pip install -r requirements.txt
 ```
 
-Run the bot:
+Go to bot directory
 
 ```
-python bot/main.py
+cd bot
+```
+
+Create database
+
+```
+python manage.py --create_database
+```
+
+run bot
+
+```
+python manage.py -r
 ```

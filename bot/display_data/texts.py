@@ -1,6 +1,6 @@
 # flake8: noqa: E501
 """All texts to display."""
-from constants import TJ, RU
+from bot.constants import TJ, RU
 
 CHOOSE_LANG_TEXT = 'Забонро интихоб кунед / Выберите язык:'
 ERROR_TEXT = (

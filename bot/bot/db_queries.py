@@ -11,28 +11,27 @@ USERS_TABLE_FIELDS = ('chat_id', 'lang', 'main_message_id',
                       'course_message_info_id',)
 
 
-def create_users_table() -> None:
-    """Note: Run once, to create table."""
+def create_database() -> None:
+    """Note: Run once, to create database."""
     with sqlite3.connect(DATABASE) as conn:
         cursor = conn.cursor()
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS users (
                 chat_id INTEGER PRIMARY KEY,
-                lang TEXT NOT NULL,
+                lang TEXT,
                 main_message_id INTEGER,
                 course_info_message_id INTEGER
             )
         ''')
 
 
-def create_user(chat_id: int, lang: str) -> None:
+def create_user(chat_id: int) -> None:
     """Record user at database."""
     with sqlite3.connect(DATABASE) as conn:
         cursor = conn.cursor()
         cursor.execute('''
-            INSERT OR REPLACE INTO users (chat_id, lang)
-            VALUES (?, ?)
-            ''', (chat_id, lang))
+            INSERT OR REPLACE INTO users (chat_id) VALUES (?)
+            ''', (chat_id,))
 
 
 class User:

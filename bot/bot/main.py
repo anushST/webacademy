@@ -1,4 +1,4 @@
-"""Bot's main file. Run bot here."""
+"""Bot's main file."""
 import logging
 from os import getenv
 
@@ -7,20 +7,20 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import (CallbackContext, CallbackQueryHandler,
                           CommandHandler, Filters, MessageHandler, Updater)
 
-import constants
-import db_queries
-from decorators import safe_handler_method
+from . import constants
+from . import db_queries
+from .exceptions import BadRequestError, NoTokenError
 from display_data import buttons, texts
-from exceptions import BadRequestError, NoTokenError
-from paginator import Paginator
-from shortcuts import send_photo
+from utils.decorators import safe_handler_method
+from utils.paginators import Paginator
+from utils.shortcuts import send_photo
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s '
                               '(def %(funcName)s:%(lineno)d)')
 handler = logging.handlers.RotatingFileHandler(
-        'logs/bot.log', maxBytes=5*1024*1024, backupCount=2
+    'logs/bot.log', maxBytes=5*1024*1024, backupCount=2
 )
 handler.setFormatter(formatter)
 logger.addHandler(handler)
@@ -63,14 +63,13 @@ def main_menu(update: Update, context: CallbackContext) -> None:
     """
     query = update.callback_query
     chat_id = update.effective_chat.id
-    if 'lang' in query.data:
+    if 'lang' in query.data:  # TODO Continue from here
         lang = query.data.split(constants.LANG_PATTERN.split("^")[1])[1]
         if lang in constants.LANGUAGES:
-            lang = db_queries.save_lang(chat_id, lang)
+            db_queries.create_user(chat_id, lang)
         else:
             raise BadRequestError('Lang is in incorrect format.')
-    else:
-        lang = db_queries.get_lang(chat_id)
+    lang = db_queries.User(chat_id).get_field('lang')
 
     keyboard = [
         [InlineKeyboardButton(buttons.COURSE_BUTTON[lang],
@@ -82,8 +81,9 @@ def main_menu(update: Update, context: CallbackContext) -> None:
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    if not db_queries.get_sent_main_message(chat_id):
-        send_photo(
+    user_object = db_queries.User(chat_id)
+    if not user_object.get_field('main_message_id'):
+        message = send_photo(
             url='logo.jpg',
             bot=context.bot,
             chat_id=chat_id,
@@ -91,7 +91,7 @@ def main_menu(update: Update, context: CallbackContext) -> None:
             reply_markup=reply_markup,
             parse_mode='HTML'
         )
-        db_queries.set_sent_main_message_True(chat_id)
+        user_object.edit_field('main_message_id', message.id)
     else:
         query.edit_message_caption(texts.WELCOME_TEXT[lang], reply_markup)
     if 'lang_message_id' in context.bot_data:
@@ -105,7 +105,7 @@ def contact_info(update: Update, context: CallbackContext) -> None:
     """Send contact info."""
     query = update.callback_query
     chat_id = update.effective_chat.id
-    lang = db_queries.get_lang(chat_id)
+    lang = db_queries.User(chat_id).get_field('lang')
     keyboard = [
         [InlineKeyboardButton(buttons.INSTAGRAM_BUTTON,
                               constants.INSTAGRAM_URL)],
@@ -124,7 +124,7 @@ def about_academy(update: Update, context: CallbackContext) -> None:
     """Send information about academy."""
     query = update.callback_query
     chat_id = update.effective_chat.id
-    lang = db_queries.get_lang(chat_id)
+    lang = db_queries.User(chat_id).get_field('lang')
     keyboard = [
         [InlineKeyboardButton(buttons.BACK_BUTTON[lang],
                               callback_data=constants.MAIN_MENU_CALLBACK)]
@@ -139,7 +139,7 @@ def courses(update: Update, context: CallbackContext) -> None:
     """Send courses list."""
     query = update.callback_query
     chat_id = update.effective_chat.id
-    lang = db_queries.get_lang(chat_id)
+    lang = db_queries.User(chat_id).get_field('lang')
     page = int(query.data.split(constants.COURSES_PATTERN.split("^")[1])[1])
     paginator = Paginator(texts.COURSES,
                           constants.COURSES_PATTERN.split("^")[1],
@@ -174,7 +174,7 @@ def course_info(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
     course_name = query.data.split('_')[1]
     chat_id = update.effective_chat.id
-    lang = db_queries.get_lang(chat_id)
+    lang = db_queries.User(chat_id).get_field('lang')
 
     keyboard = [
         [InlineKeyboardButton(buttons.REGISTER_BUTTON[lang],
@@ -220,7 +220,3 @@ def main() -> None:
         updater.idle()
     except Exception as e:
         logger.error(f'An error occured in: {e}', exc_info=True)
-
-
-if __name__ == '__main__':
-    main()
