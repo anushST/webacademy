@@ -1,4 +1,4 @@
-"""Here are all contstants of bot."""
+"""Constants of bot package."""
 # Languages
 TJ = 'tj'
 RU = 'ru'
@@ -13,10 +13,9 @@ COURSES_CALLBACK = 'courses_page_1'
 MAIN_MENU_CALLBACK = 'main_menu'
 
 # CallBack patters
-LANG_PATTERN = '^lang_'
-COURSE_PATTERN = '^course_'
-COURSES_PATTERN = '^courses_page_'
-MAIN_MENU_PATTERN = f'^{LANG_PATTERN}|{MAIN_MENU_CALLBACK}$'
+LANG_PATTERN = 'lang_'
+COURSE_PATTERN = 'course_'
+COURSES_PATTERN = 'courses_page_'
 
 # Commands
 START_COMMAND = 'start'
@@ -31,4 +30,7 @@ REGISTER_URL = ('https://docs.google.com/forms/d/1Fkr0s_IPnkmeA1N4wfhqsrXFHLdy'
 TELEGRAM_CHANNEL_URL = 'https://t.me/webacademychannel'
 
 # Paginator
-ITEMS_PER_PAGE = 2
+ITEMS_PER_PAGE = 3
+
+# Database
+DATABASE = 'bot/db.sqlite3'

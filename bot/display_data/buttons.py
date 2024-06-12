@@ -1,5 +1,5 @@
 """Here is all texts of buttons with their translations."""
-from constants import TJ, RU
+from bot.constants import TJ, RU
 
 TJ_LANG_CHOOSE_BUTTON = 'Точики 🇹🇯'
 RU_LANG_CHOOSE_BUTTON = 'Русский 🇷🇺'
