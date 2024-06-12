@@ -40,6 +40,12 @@ Install dependencies from file requirements.txt:
 pip install -r requirements.txt
 ```
 
+Create .env file and write there your Telegram_bot token
+
+```
+TELEGRAM_BOT_TOKEN='your token'
+```
+
 Go to bot directory
 
 ```
