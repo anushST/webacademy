@@ -8,7 +8,7 @@ from .exceptions import (FieldDoesNotExistError, ObjectDoesNotExistError,
 
 
 USERS_TABLE_FIELDS = ('chat_id', 'lang', 'main_message_id',
-                      'course_message_info_id',)
+                      'course_info_message_id',)
 
 
 def create_database() -> None:

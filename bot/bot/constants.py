@@ -30,7 +30,7 @@ REGISTER_URL = ('https://docs.google.com/forms/d/1Fkr0s_IPnkmeA1N4wfhqsrXFHLdy'
 TELEGRAM_CHANNEL_URL = 'https://t.me/webacademychannel'
 
 # Paginator
-ITEMS_PER_PAGE = 2
+ITEMS_PER_PAGE = 3
 
 # Database
 DATABASE = 'bot/db.sqlite3'

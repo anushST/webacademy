@@ -48,12 +48,14 @@ COURSES = {
              'button_text': '📱 ios-разработка' }, # max_length=16
         RU: {'text': 'Давайте обучаться курсу ios',
              'button_text': '📱 ios-разработка'},
+        'photo_url': 'course.webp',
     },
     'android': {
         TJ: {'text': 'Андроид ба пеш',
              'button_text': '🤖 Android-разработ'},
         RU: {'text': 'Андроид вперёд',
              'button_text': '🤖 Android-разработ'},
+        'photo_url': 'course.webp',
     },
     'python-base': {
         TJ: {'text': 'Курси пайтон',
@@ -66,6 +68,7 @@ COURSES = {
             '    • 📍 2-й месяц: Git, GitHub, SQLite, pytest, unittest\n'
             '    • 📍 3-й месяц: python-telegram-bot продолжение, финальный проект\n'),
              'button_text': '🐍 Python-основы'},
+        'photo_url': 'course.webp',
     },
     'python-django': {
         TJ: {'text': 'Django',
@@ -78,11 +81,13 @@ COURSES = {
             '    • 📍 2-4-й месяц: REST API, django-rest-framework\n'
             '    • 📍 5-й месяц: Управление проектом на сервере\n'),
              'button_text': '🌐 Python-django'},
+        'photo_url': 'course.webp',
     },
     'js-base': {
         TJ: {'text': 'Курс Js - основахо',
              'button_text': '🌐 js-основахо'},
         RU: {'text': 'Курс js - основахо',
              'button_text': '🌐 js-основы'},
+        'photo_url': 'course.webp',
     }
 }

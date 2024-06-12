@@ -49,8 +49,9 @@ def start(update: Update, context: CallbackContext) -> None:
              callback_data=f'{constants.LANG_PATTERN}{constants.RU}')]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    update.message.reply_text(texts.CHOOSE_LANG_TEXT,
-                              reply_markup=reply_markup)
+    message = update.message.reply_text(texts.CHOOSE_LANG_TEXT,
+                                        reply_markup=reply_markup)
+    context.bot_data['lang_message_id'] = message.message_id
     update.message.delete()
 
 
@@ -160,19 +161,12 @@ def courses(update: Update, context: CallbackContext) -> None:
                           constants.COURSES_PATTERN,
                           constants.ITEMS_PER_PAGE)
     keyboard = []
-    row = []
 
-    for i, (callback_data, course) in enumerate(paginator.get_page(page)):
+    for callback_data, course in paginator.get_page(page):
         callback = f'{constants.COURSE_PATTERN}{callback_data}'
         button_text = course[lang]['button_text'][:16]
-        row.append(InlineKeyboardButton(button_text, callback_data=callback))
-
-        if (i + 1) % 2 == 0:
-            keyboard.append(row)
-            row = []
-
-    if row:
-        keyboard.append(row)
+        keyboard.append([InlineKeyboardButton(button_text,
+                                              callback_data=callback)])
 
     keyboard.append(paginator.create_pagination_buttons(page))
     keyboard.append(
@@ -180,7 +174,29 @@ def courses(update: Update, context: CallbackContext) -> None:
                               callback_data=constants.MAIN_MENU_CALLBACK)])
 
     reply_markup = InlineKeyboardMarkup(keyboard)
-    query.edit_message_caption(texts.COURSES_LIST_TEXT[lang], reply_markup)
+    main_message_id = db_queries.User(
+        chat_id).get_field('main_message_id')
+    caption = texts.COURSES_LIST_TEXT[lang]
+    if not main_message_id:
+        message = send_photo(
+            url='logo.jpg',
+            bot=context.bot,
+            chat_id=chat_id,
+            caption=caption,
+            reply_markup=reply_markup,
+            parse_mode='HTML'
+        )
+        db_queries.User(chat_id).edit_field('main_message_id',
+                                            message.message_id)
+    else:
+        query.edit_message_caption(caption, reply_markup)
+
+    course_info_message_id = db_queries.User(
+        chat_id).get_field('course_info_message_id')
+    if course_info_message_id:
+        query.delete_message(course_info_message_id)
+        db_queries.User(chat_id).edit_field('course_info_message_id',
+                                            None)
 
 
 @safe_handler_method
@@ -192,7 +208,6 @@ def course_info(update: Update, context: CallbackContext) -> None:
     lang = db_queries.User(chat_id).get_field('lang')
     if lang is None:
         raise LangNotChosenError
-
     keyboard = [
         [InlineKeyboardButton(buttons.REGISTER_BUTTON[lang],
                               constants.REGISTER_URL)],
@@ -200,9 +215,25 @@ def course_info(update: Update, context: CallbackContext) -> None:
                               callback_data=constants.COURSES_CALLBACK)]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    query.edit_message_caption(texts.COURSES[course_name][lang]['text'],
-                               reply_markup=reply_markup,
-                               parse_mode='HTML')
+    course_info_message_id = db_queries.User(
+        chat_id).get_field('course_info_message_id')
+    caption = texts.COURSES[course_name][lang]['text']
+    if not course_info_message_id:
+        message = send_photo(
+            url=texts.COURSES[course_name]['photo_url'],
+            bot=context.bot,
+            chat_id=chat_id,
+            caption=caption,
+            reply_markup=reply_markup,
+            parse_mode='HTML'
+        )
+        db_queries.User(chat_id).edit_field('course_info_message_id',
+                                            message.message_id)
+    main_message_id = db_queries.User(
+        chat_id).get_field('main_message_id')
+    if main_message_id:
+        query.delete_message(main_message_id)
+        db_queries.User(chat_id).edit_field('main_message_id', None)
 
 
 def delete_user_message(update: Update, context: CallbackContext) -> None:
